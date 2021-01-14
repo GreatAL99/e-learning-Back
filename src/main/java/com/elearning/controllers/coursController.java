@@ -86,7 +86,7 @@ public class coursController {
 			headers.add(HttpHeaders.AUTHORIZATION, token);
 			HttpEntity< Image > imgEntity = new HttpEntity<>(new Image(image.getOriginalFilename(),image.getContentType(),image.getBytes()), headers);
 
-			Image img = restTemplate.postForObject("http://service-image/images/addImage",imgEntity,Image.class);
+			Image img = restTemplate.postForObject(imageUrl+"addImage",imgEntity,Image.class);
 			coursRepository.save(new Cours(cours.getNom(), cours.getCategorie(), cours.getDateDeb(),
 					cours.getDateFin(),cours.getDescription(), prof.getIduser(), img.getId()));
 		}

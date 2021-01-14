@@ -65,6 +65,20 @@ public class UserController {
 	@Value("${url.images}")
 	private String imageUrl;
 
+	
+	
+	public UserController() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public UserController(EtudiantRepository etudiantRepository, ProfesseurRepository professeurRepository, UtilisateurRepository userRepository) {
+		super();
+		this.etudiantRepository = etudiantRepository;
+		this.professeurRepository = professeurRepository;
+		this.userRepository = userRepository;
+	}
+
 	@GetMapping("/professor/{username}")
 	public Professeur getProf(@PathVariable("username") String username) {
 		
@@ -110,7 +124,7 @@ public class UserController {
 		}
 		else {
 			
-			user.setPassword(passwordEncoder.encode(user.getPassword()));
+			//user.setPassword(passwordEncoder.encode(user.getPassword()));
 			userRepository.save(user);
 			if (user.getRole().equals("ROLE_ETUDIANT")) {
 				if(image!=null) {
@@ -140,6 +154,52 @@ public class UserController {
 			
 		
 		
+	}
+	
+	//added method for junit5
+	
+	public String signupnoimage(Utilisateur user) {
+		try {
+			return signup(null, user);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return "Exception has been thrown";
+	}
+	
+	
+	public boolean acceptedinfo(String email, String pwd) {
+		try {
+			return isValid(email) && pwdisValid(pwd);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean isValid(String email) throws Exception {
+		if (email.isEmpty()) {
+			throw new Exception("Email should not be empty! Please insert a valid mail and try again.");
+		}
+		if (email.contains("@gmail.com"))
+			return true;
+		return false;
+	}
+	
+	public boolean pwdisValid(String password) {
+		if (password.length() > 8 && !password.toLowerCase().equals(password) && !password.toUpperCase().equals(password) && characterspecial(password) && containsnumber(password))
+			return true;
+		return false;
+	}
+	
+	public boolean characterspecial(String pwd) {
+		return pwd.contains("/") || pwd.contains("&") || pwd.contains("%") || pwd.contains(".") || pwd.contains(",") || pwd.contains(";") || pwd.contains(":") || pwd.contains("!") 
+				|| pwd.contains("?") || pwd.contains("/");
+	}
+	
+	public boolean containsnumber(String pwd) {
+		return pwd.contains("0") || pwd.contains("1") || pwd.contains("2") || pwd.contains("3") || pwd.contains("4") || pwd.contains("5") || pwd.contains("6") || pwd.contains("7") 
+				|| pwd.contains("8") || pwd.contains("9");
 	}
 	
 	@PostMapping(value="/login")
